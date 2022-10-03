@@ -1,8 +1,22 @@
 const cardsContainer = document.querySelector('.cards-container');
 
-const startButton = document.querySelector('#startButton');
+const winBanner = document.querySelector('.gameboard-win');
 
-const cards = ['airplane', 'cactus', 'car', 'flamingo', 'hat', 'luggage', 'popsicle', 'sunglasses'];
+const startButton = document.querySelector('#startButton');
+const giveUpButton = document.querySelector('#endButton');
+
+const restartButton = document.querySelector('.restart-btn');
+
+const cards = [
+   'airplane',
+   'cactus',
+   'car',
+   'flamingo',
+   'hat',
+   'luggage',
+   'popsicle',
+   'sunglasses',
+];
 
 const pairs = cards.concat(cards);
 
@@ -17,29 +31,31 @@ let isWin = false;
 let isStart = false;
 
 function shuffleCards(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    let randomNum = Math.floor(Math.random() * (i + 1));
-    let swap = array[i];
-    array[i] = array[randomNum];
-    array[randomNum] = swap;
-  }
-  return array;
+   for (let i = array.length - 1; i > 0; i--) {
+      let randomNum = Math.floor(Math.random() * (i + 1));
+      let swap = array[i];
+      array[i] = array[randomNum];
+      array[randomNum] = swap;
+   }
+   return array;
 }
 
 let shuffledCards = shuffleCards(pairs);
 
 setGame();
 
-startButton.addEventListener("click", startGame);
+startButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', () => window.location.reload());
+giveUpButton.addEventListener('click', () => window.location.reload());
 
 if (isStart) {
-  startButton.disabled = true;
+   startButton.disabled = true;
 }
 
 function setGame() {
-  htmlTemplate = ``;
-  for (let i = 0; i < shuffledCards.length; i++) {
-    htmlTemplate += `<div class="card" data-card="${shuffledCards[i]}">
+   htmlTemplate = ``;
+   for (let i = 0; i < shuffledCards.length; i++) {
+      htmlTemplate += `<div class="card" data-card="${shuffledCards[i]}">
     <div class="card-inner">
       <div class="card-face front"></div>
       <div class="card-face back">
@@ -47,99 +63,97 @@ function setGame() {
       </div>
     </div>
   </div>`;
-  }
+   }
 
-  cardsContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+   cardsContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
 }
 
 allCards = [...document.querySelectorAll('.card')];
 
-allCards.forEach(card => {
-  card.style.pointerEvents = "none";
-})
+allCards.forEach((card) => {
+   card.style.pointerEvents = 'none';
+});
 
 function startGame() {
+   winBanner.style.display = 'none';
+   isStart = true;
 
-  isStart = true;
+   if (isStart) {
+      startButton.disabled = true;
+   }
 
-  if (isStart) {
-    startButton.disabled = true;
-  }
+   allCards.forEach((card) => {
+      card.firstElementChild.classList.add('isFlipped');
+   });
 
-  allCards.forEach(card => {
-    card.firstElementChild.classList.add("isFlipped");
-  })
-
-  setTimeout(() => {
-    allCards.forEach(card => {
-      card.firstElementChild.classList.remove("isFlipped");
-      card.style.pointerEvents = "auto";
-    })
-  }, 2000)
+   setTimeout(() => {
+      allCards.forEach((card) => {
+         card.firstElementChild.classList.remove('isFlipped');
+         card.style.pointerEvents = 'auto';
+      });
+   }, 2000);
 }
 
 allCards.forEach((card, index) => {
-  card.addEventListener('click', (e) => {
-    flipCard(e, index);
-  });
+   card.addEventListener('click', (e) => {
+      flipCard(e, index);
+   });
 });
 
 function flipCard(e, index) {
+   const clickedCard = e.currentTarget.firstElementChild;
+   if (!clickedCard.classList.contains('isFlipped')) {
+      clickedCard.classList.add('isFlipped');
+   }
+   flippedNum++;
 
-  const clickedCard = e.currentTarget.firstElementChild;
-  if (!clickedCard.classList.contains("isFlipped")) {
-    clickedCard.classList.add("isFlipped");
-  }
-  flippedNum++;
+   if (flippedNum <= 2) {
+      cardsIndex.push(index);
+      if (flippedNum == 2) {
+         checkCards();
+      }
+   }
 
-  if (flippedNum <= 2) {
-    cardsIndex.push(index);
-    if (flippedNum == 2) {
-      checkCards();
-    }
-  }
+   if (checkWin()) {
+      isWin = true;
+   } else {
+      isWin = false;
+   }
 
-  if (checkWin()) {
-    isWin = true;
-  } else {
-    isWin = false;
-  }
-
-  if (isWin) {
-    console.log("You have found all the pairs!");
-  }
-
-  console.log(flippedNum, cardsIndex);
+   if (isWin) {
+      winBanner.style.display = 'flex';
+   }
 }
 
 function checkCards() {
+   allCards.forEach((card) => {
+      card.style.pointerEvents = 'none';
+   });
 
-  allCards.forEach((card) => {
-    card.style.pointerEvents = "none";
-  })
-
-  let [firstIndex, secondIndex] = cardsIndex;
-  let firstCard = allCards[firstIndex];
-  let secondCard = allCards[secondIndex];
-  if (firstCard.dataset.card !== secondCard.dataset.card) {
-    setTimeout(() => {
-      firstCard.firstElementChild.classList.remove("isFlipped");
-      secondCard.firstElementChild.classList.remove("isFlipped");
+   let [firstIndex, secondIndex] = cardsIndex;
+   let firstCard = allCards[firstIndex];
+   let secondCard = allCards[secondIndex];
+   if (firstCard.dataset.card !== secondCard.dataset.card) {
+      setTimeout(() => {
+         firstCard.firstElementChild.classList.remove('isFlipped');
+         secondCard.firstElementChild.classList.remove('isFlipped');
+         allCards.forEach((card) => {
+            card.style.pointerEvents = 'auto';
+         });
+         flippedNum = 0;
+         cardsIndex = [];
+      }, 1000);
+   } else if (firstCard.dataset.card == secondCard.dataset.card) {
       allCards.forEach((card) => {
-        card.style.pointerEvents = "auto";
-      })
+         card.style.pointerEvents = 'auto';
+      });
       flippedNum = 0;
       cardsIndex = [];
-    }, 1000);
-  } else if (firstCard.dataset.card == secondCard.dataset.card) {
-    allCards.forEach((card) => {
-      card.style.pointerEvents = "auto";
-    })
-    flippedNum = 0;
-    cardsIndex = [];
-  }
+   }
 }
 
 function checkWin() {
-  return allCards.every(card => card.firstElementChild.classList.contains("isFlipped"));
+   return allCards.every((card) =>
+      card.firstElementChild.classList.contains('isFlipped')
+   );
 }

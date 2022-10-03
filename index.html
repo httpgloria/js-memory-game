@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width initial-scale = 1.0" />
+      <link
+         href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+         rel="stylesheet"
+      />
+      <link rel="stylesheet" href="style.css" />
+      <title>Memory Game</title>
+   </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width initial-scale = 1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <title>Memory Game</title>
-</head>
-
-<body>
-
-  <div class="gameboard">
-    <div class="game-settings">
-      <button id="startButton">Start</button>
-      <button id="endButton">Give up</button>
-    </div>
-    <div class="cards-container">
-      <!-- <div class="card">
+   <body>
+      <div class="gameboard">
+         <div class="gameboard-win">
+            <h3>You found all pairs!</h3>
+            <button type="button" class="restart-btn">Restart</button>
+         </div>
+         <div class="game-settings">
+            <button id="startButton">Start</button>
+            <button id="endButton">Give up</button>
+         </div>
+         <div class="cards-container">
+            <!-- <div class="card">
         <div class="card-inner">
           <div class="card-face front"></div>
           <div class="card-face back">
@@ -145,9 +150,8 @@
           </div>
         </div>
       </div> -->
-    </div>
-  </div>
-  <script src="main.js"></script>
-</body>
-
+         </div>
+      </div>
+      <script src="main.js"></script>
+   </body>
 </html>
